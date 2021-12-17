@@ -11,31 +11,15 @@ import Myselect from "./Components/UI/select/Myselect";
 import PostFilter from "./Components/PostFilter";
 import MyModal from "./Components/UI/MyModal/MyModal";
 import MyButton from "./Components/UI/button/mybutton";
+import {usePosts} from "./hooks/usePosts";
 
 function App() {
 
-    const [posts, setPosts] = useState([
-        {id: 1, title: 'java', body: 'Desription1'},
-        {id: 2, title: 'ara', body: 'Desription2'},
-        {id: 3, title: 'java3', body: 'Desription3'},
-    ])
+    const [posts, setPosts] = useState([])
+    const [filter, setFilter] = useState({sort: '', query: ''})
+    const [modal, setModal] = useState(false);
+    const sortedAndSearchedPosts = usePosts(posts, filter.sort, filter.query)
 
-
- const [filter, setFilter] = useState({sort: '', query: ''})
-const [modal, setModal] = useState(false);
-
-
-    const sortedPosts = useMemo(() =>{
-        console.log('Обработка функции сорт')
-        if (filter.sort) {
-            return [...posts].sort((a, b) => a[filter.sort].localeCompare(b[filter.sort]))
-        }
-        return posts;
-    },  [filter.sort, posts])
-
-    const sortedAndSearchedPosts = useMemo(() =>{
-            return sortedPosts.filter(post => post.title.toLowerCase().includes(filter.query.toLowerCase()))
-    }, [filter.query,sortedPosts ])
 
     const createPost = (newPost) => {
         setPosts([...posts, newPost])
@@ -47,10 +31,9 @@ const [modal, setModal] = useState(false);
     }
 
 
-
     return (
         <div className="App">
-            <MyButton style={{marginTop: 30}} onClick={()=> setModal(true)}>
+            <MyButton style={{marginTop: 30}} onClick={() => setModal(true)}>
                 Создать пользователя
             </MyButton>
             <MyModal visible={modal} setVisible={setModal}>
@@ -60,8 +43,7 @@ const [modal, setModal] = useState(false);
             <hr style={{margin: '15px 0'}}/>
             <PostFilter filter={filter} setFilter={setFilter}/>
 
-                <PostList remove={removePost} posts={sortedAndSearchedPosts} title="Посты про JS"/>
-
+            <PostList remove={removePost} posts={sortedAndSearchedPosts} title="Посты про JS"/>
 
 
         </div>
