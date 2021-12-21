@@ -1,4 +1,4 @@
-import React, {useMemo, useState} from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 import Counter from "./Components/Counter";
 import ClassCounter from "./Components/ClassCounter";
 import './Styles/app.css'
@@ -13,6 +13,7 @@ import MyModal from "./Components/UI/MyModal/MyModal";
 import MyButton from "./Components/UI/button/mybutton";
 import {usePosts} from "./hooks/usePosts";
 import axios from "axios";
+import PostService from "./Components/API/PostsService";
 
 function App() {
 
@@ -21,6 +22,11 @@ function App() {
     const [modal, setModal] = useState(false);
     const sortedAndSearchedPosts = usePosts(posts, filter.sort, filter.query)
 
+    useEffect( () => {
+       fetchPosts()
+
+    },[])
+
 
     const createPost = (newPost) => {
         setPosts([...posts, newPost])
@@ -28,8 +34,8 @@ function App() {
     }
 
      async function fetchPosts() {
-        const response = await axios.get('https://jsonplaceholder.typicode.com/posts')
-         setPosts(response.data)
+        const posts = await PostService.getAll();
+         setPosts(posts)
     }
 
     const removePost = (post) => {
